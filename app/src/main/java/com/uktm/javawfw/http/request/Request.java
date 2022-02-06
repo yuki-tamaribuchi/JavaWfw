@@ -50,7 +50,7 @@ public class Request implements IRequest {
 			if (isRequestLine) {
 				String[] splited_line = line.split(" ");
 				requestLine.put("method", splited_line[0]);
-				requestLine.put("uri", splited_line[1]);
+				requestLine.put("uri", splited_line[1].substring(1));
 				requestLine.put("protocol", splited_line[2]);
 				
 				isRequestLine = false;
