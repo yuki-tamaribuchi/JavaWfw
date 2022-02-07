@@ -9,28 +9,20 @@ import java.util.ArrayList;
 
 
 public abstract class AbstractUrls implements IUrls {
-	public ArrayList<Path> urlPatterns = new ArrayList<Path>();
-	
-	private ArrayList<String> getUrls() {
-		ArrayList<String> urlList = new ArrayList<String>();
-		for(Path path : urlPatterns){
-			urlList.add(path.getUrl());
-		}
-		return urlList;
-	}
+	public ArrayList<IPath> urlPatterns = new ArrayList<IPath>();
 
-	private int matchUrl(String url) {
-		ArrayList<String> urls = getUrls();
-		int idx = urls.indexOf(url);
-		return idx;
+
+	private IPath matchUrl(String url) {
+		int i;
+		for(i=0; i<=urlPatterns.size()-1; i++) {
+			if (urlPatterns.get(i).isUrlMatched(url)) {
+				return urlPatterns.get(i);
+			}
+		}
+		return null;
 	}
 
 	public IPath getPath(String url) {
-		int matchedIdx;
-		if ((matchedIdx=matchUrl(url)) == -1){
-			return null;
-		} else {
-			return urlPatterns.get(matchedIdx);
-		}
+		return matchUrl(url);
 	}
 }
