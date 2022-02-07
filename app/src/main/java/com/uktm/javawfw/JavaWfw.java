@@ -10,10 +10,11 @@ import com.uktm.javawfw.urls.IUrls;
 
 public class JavaWfw {
     private ArrayList<IUrls> urlsArrayList = new ArrayList<IUrls>();
+    private Server server;
 
     public void serve() {
         try{
-            Server server = new Server("127.0.0.1", 8000, this);
+            server = new Server("127.0.0.1", 8000, this);
             server.serve();
         } catch (IOException e) {
             System.err.println("Host error: " + e);
