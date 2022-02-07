@@ -10,4 +10,6 @@ public interface IRequest {
 	public Hashtable<String, String> getRequestOptions();
 	public String getRequestBody();
 	public String getRequestOutput();
+	public void setPathParameters(Hashtable<String, String> pathParameters);
+	public Hashtable<String, String> getPathParameters();
 }

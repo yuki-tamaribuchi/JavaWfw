@@ -18,10 +18,11 @@ import com.uktm.javawfw.exception.http.request.LoadRequestFailedException;
 
 
 public class Request implements IRequest {
-	protected Socket socket;
-	protected Hashtable<String, String> requestLine = new Hashtable<String, String>();
-	protected Hashtable<String, String> requestOptions = new Hashtable<String, String>();
-	protected String requestBody;
+	private Socket socket;
+	private Hashtable<String, String> requestLine = new Hashtable<String, String>();
+	private Hashtable<String, String> requestOptions = new Hashtable<String, String>();
+	private String requestBody;
+	private Hashtable<String, String> pathParameters;
 
 
 	public Request(Socket socket) throws IOException, LoadRequestFailedException {
@@ -67,12 +68,12 @@ public class Request implements IRequest {
 			}
 		}
 
-
-
-		char[] buf = new char[contentLength];
-		in.read(buf);
-		requestBody = new String(buf);
-
+		if (contentLength != -1) {
+			char[] buf = new char[contentLength];
+			in.read(buf);
+			requestBody = new String(buf);
+		}
+		
 		return true;
 	}
 
@@ -96,5 +97,13 @@ public class Request implements IRequest {
 		LocalDateTime datetime = LocalDateTime.now();
 		String formattedDatetime = datetime.format(DateTimeFormatter.ofPattern("yyyy/MMM/dd HH:mm:ss"));
 		return formattedDatetime + " " + requestLine.get("method") + " " + requestLine.get("uri");
+	}
+
+	public void setPathParameters(Hashtable<String, String> pathParameters) {
+		this.pathParameters = pathParameters;
+	}
+
+	public Hashtable<String, String> getPathParameters() {
+		return pathParameters;
 	}
 }
