@@ -4,16 +4,15 @@ import com.uktm.javawfw.http.request.Request;
 import com.uktm.javawfw.http.request.IRequest;
 import com.uktm.javawfw.exception.http.request.LoadRequestFailedException;
 import com.uktm.javawfw.http.response.IResponse;
+import com.uktm.javawfw.http.response.URLNotFoundResponse;
 import com.uktm.javawfw.urls.URLResolver;
 import com.uktm.javawfw.exception.urls.URLMatchNotFoundException;
 import com.uktm.javawfw.urls.IPath;
-
-import com.uktm.sample.controllers.SampleController;
 import com.uktm.javawfw.controller.base.IController;
-import com.uktm.javawfw.JavaWfw;
+import com.uktm.javawfw.urls.PathParameterResolver;
 
 
-import java.net.*;
+import java.net.Socket;
 import java.util.Hashtable;
 import java.io.IOException;
 import java.lang.Thread;
@@ -32,31 +31,38 @@ public class Worker extends Thread {
 	}
 
 	public void run() {
+		String url = null;
 		IPath path = null;
 		Class<? extends IController> controllerClass = null;
 		IController controller = null;
+		IResponse response = null;
+		Hashtable<String, String> pathParameters;
 		
 		try{
 			request = new Request(socket);
 			System.out.println(request.getRequestOutput());
+			url = request.getRequestLine().get("uri");
 
 			try {
-				path = urlResolver.resolve(request.getRequestLine().get("uri"));
+				path = urlResolver.resolve(url);
+				pathParameters = PathParameterResolver.resolve(url, path);
+				request.setPathParameters(pathParameters);
+				controllerClass = path.getController();
+
+				try {
+					controller = controllerClass.getDeclaredConstructor().newInstance();
+				} catch (Exception e) {
+					System.out.println("New Instance error: " + e);
+				}
+
+				response = controller.get(request);
+
 			} catch (URLMatchNotFoundException e) {
-				System.out.println("not found");
+				response = new URLNotFoundResponse(socket);
+			} finally {
+				response.sendResponse();
+				socket.close();
 			}
-
-			controllerClass = path.getController();
-			try {
-				controller = controllerClass.getDeclaredConstructor().newInstance();
-			} catch (Exception e) {
-				System.out.println("New Instance error: " + e);
-			}
-
-			IResponse response = controller.get(request);
-			response.sendResponse();
-
-			socket.close();
 
 		} catch (IOException e) {
 			System.err.println("Host error: " + e);
