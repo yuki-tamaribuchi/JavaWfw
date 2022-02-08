@@ -14,7 +14,7 @@ public class JavaWfw {
 
     public void serve() {
         try{
-            server = new Server("127.0.0.1", 8000, this);
+            server = new Server("127.0.0.1", 8000, urlsArrayList);
             server.serve();
         } catch (IOException e) {
             System.err.println("Host error: " + e);
