@@ -10,6 +10,8 @@ import com.uktm.javawfw.exception.urls.URLMatchNotFoundException;
 import com.uktm.javawfw.urls.IPath;
 import com.uktm.javawfw.controller.base.IController;
 import com.uktm.javawfw.urls.PathParameterResolver;
+import com.uktm.javawfw.dispatcher.IDispatcher;
+import com.uktm.javawfw.dispatcher.Dispatcher;
 
 
 import java.net.Socket;
@@ -49,13 +51,7 @@ public class Worker extends Thread {
 				request.setPathParameters(pathParameters);
 				controllerClass = path.getController();
 
-				try {
-					controller = controllerClass.getDeclaredConstructor().newInstance();
-				} catch (Exception e) {
-					System.out.println("New Instance error: " + e);
-				}
-
-				response = controller.get(request);
+				response = Dispatcher.dispatch(request, controllerClass);
 
 			} catch (URLMatchNotFoundException e) {
 				response = new URLNotFoundResponse(socket);
