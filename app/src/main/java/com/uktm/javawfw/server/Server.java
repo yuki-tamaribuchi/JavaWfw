@@ -2,10 +2,11 @@ package com.uktm.javawfw.server;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
 
 import com.uktm.javawfw.server.Worker;
-import com.uktm.javawfw.JavaWfw;
 import com.uktm.javawfw.urls.URLResolver;
+import com.uktm.javawfw.urls.IUrls;
 
 public class Server {
 	private String serverAddr;
@@ -13,10 +14,10 @@ public class Server {
 	private ServerSocket serverSocket;
 	private URLResolver urlResolver;
 
-	public Server(String serverAddr, int serverPort, JavaWfw app) {
+	public Server(String serverAddr, int serverPort, ArrayList<IUrls> urlsArrayList) {
 		this.serverAddr = serverAddr;
 		this.serverPort = serverPort;
-		this.urlResolver = URLResolver.getInstance(app.getUrlsArrayList());
+		this.urlResolver = URLResolver.getInstance(urlsArrayList);
 	}
 	
 	public void serve() throws IOException {
