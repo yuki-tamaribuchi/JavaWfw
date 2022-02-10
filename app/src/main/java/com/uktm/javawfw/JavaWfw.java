@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.uktm.javawfw.server.Server;
 import com.uktm.javawfw.urls.IUrls;
+import com.uktm.javawfw.exception.urls.URLRegexNotMatchedException;
 
 
 public class JavaWfw {
@@ -22,6 +23,11 @@ public class JavaWfw {
     }
 
     public void addUrls(IUrls urls) {
+        try {
+            urls.validateUrls();
+        } catch (URLRegexNotMatchedException e) {
+            System.exit(0);
+        }
         urlsArrayList.add(urls);
     }
 
