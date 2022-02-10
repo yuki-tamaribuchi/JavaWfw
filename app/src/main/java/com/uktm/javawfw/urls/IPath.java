@@ -6,8 +6,11 @@ import java.util.ArrayList;
 import com.uktm.javawfw.controller.base.IController;
 import com.uktm.javawfw.middleware.request.base.IRequestMiddleware;
 import com.uktm.javawfw.middleware.response.base.IResponseMiddleware;
+import com.uktm.javawfw.exception.urls.URLMatchNotFoundException;
+import com.uktm.javawfw.exception.urls.URLRegexNotMatchedException;
 
 public interface IPath {
+	public void validateUrl() throws URLRegexNotMatchedException;
 	public String getUrl();
 	public Pattern getUrlPattern();
 	public boolean isUrlMatched(String url);

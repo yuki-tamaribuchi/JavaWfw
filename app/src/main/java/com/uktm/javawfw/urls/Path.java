@@ -8,7 +8,7 @@ import com.uktm.javawfw.controller.base.IController;
 import com.uktm.javawfw.urls.IPath;
 import com.uktm.javawfw.middleware.request.base.IRequestMiddleware;
 import com.uktm.javawfw.middleware.response.base.IResponseMiddleware;
-
+import com.uktm.javawfw.exception.urls.URLRegexNotMatchedException;
 
 public class Path implements IPath {
 	private String url;
@@ -23,6 +23,12 @@ public class Path implements IPath {
 		this.name = name;
 		this.requestMiddlewares = requestMiddlewares;
 		this.responseMiddlewares = responseMiddlewares;
+	}
+
+	public void validateUrl() throws URLRegexNotMatchedException {
+		if (!url.matches("((([A-Za-z0-9\\-]+)|(\\<[A-Za-z0-9\\-]+\\>))\\/)+")) {
+			throw new URLRegexNotMatchedException(url);
+		}
 	}
 
 	public String getUrl() {
