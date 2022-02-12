@@ -50,8 +50,10 @@ public abstract class AbstractResponse implements IResponse {
 		responseStringBuilder.append(createResponseHeader());
 		responseStringBuilder.append("\r\n");
 
-		responseStringBuilder.append(responseBody);
-		responseStringBuilder.append("\r\n");
+		if (responseBody != null) {
+			responseStringBuilder.append(responseBody);
+			responseStringBuilder.append("\r\n");
+		}
 
 		return responseStringBuilder.toString();
 	}
