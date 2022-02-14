@@ -12,6 +12,7 @@ import com.uktm.javawfw.controller.base.IController;
 import com.uktm.javawfw.urls.PathParameterResolver;
 import com.uktm.javawfw.dispatcher.IDispatcher;
 import com.uktm.javawfw.dispatcher.Dispatcher;
+import com.uktm.javawfw.middleware.executer.request.RequestMiddlewareExecuter;
 
 
 import java.net.Socket;
@@ -47,6 +48,7 @@ public class Worker extends Thread {
 
 			try {
 				path = urlResolver.resolve(url);
+				request = RequestMiddlewareExecuter.execute(path.getRequestMiddlewares(), request);
 				pathParameters = PathParameterResolver.resolve(url, path);
 				request.setPathParameters(pathParameters);
 				controllerClass = path.getController();
