@@ -13,7 +13,7 @@ import com.uktm.javawfw.urls.PathParameterResolver;
 import com.uktm.javawfw.dispatcher.IDispatcher;
 import com.uktm.javawfw.dispatcher.Dispatcher;
 import com.uktm.javawfw.middleware.executer.request.RequestMiddlewareExecuter;
-
+import com.uktm.javawfw.middleware.executer.response.ResponseMiddlewareExecuter;
 
 import java.net.Socket;
 import java.util.Hashtable;
@@ -58,6 +58,7 @@ public class Worker extends Thread {
 			} catch (URLMatchNotFoundException e) {
 				response = new URLNotFoundResponse(socket);
 			} finally {
+                response = ResponseMiddlewareExecuter.execute(path.getResponseMiddlewares(), response);
 				response.sendResponse();
 				socket.close();
 			}
