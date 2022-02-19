@@ -16,6 +16,6 @@ public interface IPath {
 	public boolean isUrlMatched(String url);
 	public Class<? extends IController> getController();
 	public String getName();
-	public ArrayList<Class<? extends IRequestMiddleware>> getRequestMiddlewares();
+	public Class<? extends IRequestMiddleware>[] getRequestMiddlewares();
 	public ArrayList<Class<? extends IResponseMiddleware>> getResponseMiddlewares();
 }
