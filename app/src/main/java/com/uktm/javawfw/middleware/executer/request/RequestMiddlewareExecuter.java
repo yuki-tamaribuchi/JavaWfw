@@ -13,24 +13,20 @@ import com.uktm.javawfw.middleware.request.base.IRequestMiddleware;
 
 
 public class RequestMiddlewareExecuter implements IRequestMiddlewareExecuter {
-	public static IRequest execute(ArrayList<Class<? extends IRequestMiddleware>> middlewares, IRequest request) {
-		if (middlewares != null) {
-			int i;
-
-			for (i=0; i<=middlewares.size()-1; i++){
-				try {
-					Method execute = middlewares.get(i).getMethod("execute", IRequest.class);
-					Object instance = middlewares.get(i).getDeclaredConstructor().newInstance();
-					request = (IRequest)execute.invoke(instance, request);
-				} catch (NoSuchMethodException e){
-					System.out.println(e);
-				} catch(InstantiationException e) {
-					System.out.println(e);
-				}catch (IllegalAccessException e) {
-					System.out.println(e);
-				} catch (InvocationTargetException e){
-					System.out.println(e);
-				}
+	public static IRequest execute(Class<? extends IRequestMiddleware>[] middlewares, IRequest request) {
+		for (Class<? extends IRequestMiddleware> middleware : middlewares) {
+			try {
+				Method execute = middleware.getMethod("execute", IRequest.class);
+				Object instance = middleware.getDeclaredConstructor().newInstance();
+				request = (IRequest)execute.invoke(instance, request);
+			} catch (NoSuchMethodException e){
+				System.out.println(e);
+			} catch(InstantiationException e) {
+				System.out.println(e);
+			}catch (IllegalAccessException e) {
+				System.out.println(e);
+			} catch (InvocationTargetException e){
+				System.out.println(e);
 			}
 		}
 		return request;
