@@ -10,13 +10,15 @@ import com.uktm.sample.controllers.SampleController;
 import com.uktm.javawfw.middleware.request.base.IRequestMiddleware;
 import com.uktm.javawfw.middleware.request.security.AllowedHostMiddleware;
 
+import com.uktm.javawfw.middleware.list.request.RequestMiddlewaresList;
+
 
 public class Urls extends AbstractUrls {
 	public Urls() {
-		ArrayList<Class<? extends IRequestMiddleware>> requestMiddlewares = new ArrayList<Class<? extends IRequestMiddleware>>();
-		requestMiddlewares.add(AllowedHostMiddleware.class);
-		urlPatterns.add(new Path("sample/", SampleController.class, "sample", requestMiddlewares, null));
-		urlPatterns.add(new Path("sample2/<username>/", SampleController.class, "sample", requestMiddlewares, null));
-		urlPatterns.add(new Path("sample3/<username>/entry/<id>/", SampleController.class, "sample", requestMiddlewares, null));
+		RequestMiddlewaresList requestMiddlewaresList = new RequestMiddlewaresList(AllowedHostMiddleware.class);
+
+		urlPatterns.add(new Path("sample/", SampleController.class, "sample", requestMiddlewaresList, null));
+		urlPatterns.add(new Path("sample2/<username>/", SampleController.class, "sample", requestMiddlewaresList, null));
+		urlPatterns.add(new Path("sample3/<username>/entry/<id>/", SampleController.class, "sample", requestMiddlewaresList, null));
 	}
 }
