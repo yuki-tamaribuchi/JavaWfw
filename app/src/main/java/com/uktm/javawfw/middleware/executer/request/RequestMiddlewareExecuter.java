@@ -14,19 +14,21 @@ import com.uktm.javawfw.middleware.request.base.IRequestMiddleware;
 
 public class RequestMiddlewareExecuter implements IRequestMiddlewareExecuter {
 	public static IRequest execute(Class<? extends IRequestMiddleware>[] middlewares, IRequest request) {
-		for (Class<? extends IRequestMiddleware> middleware : middlewares) {
-			try {
-				Method execute = middleware.getMethod("execute", IRequest.class);
-				Object instance = middleware.getDeclaredConstructor().newInstance();
-				request = (IRequest)execute.invoke(instance, request);
-			} catch (NoSuchMethodException e){
-				System.out.println(e);
-			} catch(InstantiationException e) {
-				System.out.println(e);
-			}catch (IllegalAccessException e) {
-				System.out.println(e);
-			} catch (InvocationTargetException e){
-				System.out.println(e);
+		if (middlewares != null) {
+			for (Class<? extends IRequestMiddleware> middleware : middlewares) {
+				try {
+					Method execute = middleware.getMethod("execute", IRequest.class);
+					Object instance = middleware.getDeclaredConstructor().newInstance();
+					request = (IRequest)execute.invoke(instance, request);
+				} catch (NoSuchMethodException e){
+					System.out.println(e);
+				} catch(InstantiationException e) {
+					System.out.println(e);
+				}catch (IllegalAccessException e) {
+					System.out.println(e);
+				} catch (InvocationTargetException e){
+					System.out.println(e);
+				}
 			}
 		}
 		return request;
