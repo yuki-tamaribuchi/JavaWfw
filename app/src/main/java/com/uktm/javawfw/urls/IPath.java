@@ -17,5 +17,5 @@ public interface IPath {
 	public Class<? extends IController> getController();
 	public String getName();
 	public Class<? extends IRequestMiddleware>[] getRequestMiddlewares();
-	public ArrayList<Class<? extends IResponseMiddleware>> getResponseMiddlewares();
+	public Class<? extends IResponseMiddleware>[] getResponseMiddlewares();
 }
