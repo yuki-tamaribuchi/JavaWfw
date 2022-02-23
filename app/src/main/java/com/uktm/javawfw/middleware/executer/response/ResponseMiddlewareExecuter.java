@@ -9,23 +9,21 @@ import com.uktm.javawfw.middleware.executer.response.IResponseMiddlewareExecuter
 import com.uktm.javawfw.middleware.response.base.IResponseMiddleware;
 
 public class ResponseMiddlewareExecuter implements IResponseMiddlewareExecuter {
-	public static IResponse execute(ArrayList<Class<? extends IResponseMiddleware>> middlewares, IResponse response) {
+	public static IResponse execute(Class<? extends IResponseMiddleware>[] middlewares, IResponse response) {
 		if (middlewares != null) {
-			int i;
-
-			for (i=0; i<=middlewares.size()-1; i++) {
+			for (Class<? extends IResponseMiddleware> middleware : middlewares) {
 				try {
-					Method execute = middlewares.get(i).getMethod("execute", IResponse.class);
-					Object instance = middlewares.get(i).getDeclaredConstructor().newInstance();
+					Method execute = middleware.getMethod("execute", IResponse.class);
+					Object instance = middleware.getDeclaredConstructor().newInstance();
 					response = (IResponse)execute.invoke(instance, response);
-				} catch (NoSuchMethodException e){
-					System.out.println(e);
-				} catch(InstantiationException e) {
-					System.out.println(e);
-				}catch (IllegalAccessException e) {
-					System.out.println(e);
-				} catch (InvocationTargetException e){
-					System.out.println(e);
+				} catch (NoSuchMethodException e) {
+					System.err.println(e);
+				} catch (InstantiationException e) {
+					System.err.println(e);
+				} catch (IllegalAccessException e) {
+					System.err.println(e);
+				} catch (InvocationTargetException e) {
+					System.err.println(e);
 				}
 			}
 		}
