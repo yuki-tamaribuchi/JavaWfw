@@ -1,0 +1,219 @@
+@startuml
+class 	JavaWfw {
+	-urlsArrayList : ArrayList<IUrls>
+	-server : Server
+	+serve() : void
+	+addUrls() : void
+}
+
+class java.io.IOException
+java.lang.Exception <|-- java.io.IOException
+JavaWfw <-- java.io.IOException : <<catch>>
+
+class Server {
+	-serverAddr : String
+	-serverPort : int
+	-serverSocket : ServerSocket
+	-urlResolver : URLResovler
+	+serve() throws IOException : void
+}
+java.io.IOException <-- Server : <<throws>>
+
+class java.lang.Thread
+class Worker {
+	-socket : Socket
+	-request : IRequest
+	-response : IResponse
+	-urlResolver : URLResovler
+	+run() : void
+}
+java.lang.Thread <|-- Worker
+Worker <-- java.io.IOException : <<catch>>
+
+
+class URLResolver {
+	{static} instance : URLResovler
+	-urlsArrayList : ArrayList<IUrls>
+	{static}+getInstance(urlsArrayList : ArrayList<IUrls>) : URLResolver
+	+resolve(url : String) : 
+}
+
+class PathParameterResolver {
+	{static}+resolve(url : String, path : IPath) : Hashtable<String, String>
+}
+
+class java.lang.Exception
+class URLMatchNotFoundException
+java.lang.Exception <|-- URLMatchNotFoundException
+URLMatchNotFoundException <-- URLResolver : <<throws>>
+
+interface IRequest {
+	+getSocket() : Socket
+	+getRequestLine() : Hashtable<String, String>
+	+getRequestOptions() : Hashtable<Stirng, String>
+	+getRequestBody() : String
+	+getRequestOutput() : String
+	+setPathParameters(pathParameters : Hashtable<String, String>) : void
+	+getPathParameters() : Hashtable<String, String>
+}
+
+class Request implements IRequest {
+	-socket : Socket
+	-reqeustLine : Hashtable<String, String>
+	-requestOptions : Hashtable<String, String>
+	-reqeustBody : String
+	-pathParameters : Hashtable<String, String>
+	-loadRequest(socket : Socket) : boolean
+	+getSocket() : Socket
+	+getRequestLine() : Hashtable<String, String>
+	+getRequestOptions() : Hashtable<Stirng, String>
+	+getRequestBody() : String
+	+getRequestOutput() : String
+	+setPathParameters(pathParameters : Hashtable<String, String>) : void
+	+getPathParameters() : Hashtable<String, String>
+}
+java.io.IOException <-- Request : <<throws>>
+
+interface IResponse {
+	+sendResponse() : void
+}
+
+abstract AbstractResponse implements IResponse {
+	#socket : Socket
+	#status : String
+	#responseOptions : Hashtable<String, String>
+	#responseBody : String
+	-createResponseLine() : String
+	-createResponseHeader() : String
+	#createResponse() : String
+	+sendResponse() : void
+}
+
+class JsonResponse
+AbstractResponse <|-- JsonResponse
+
+class HtmlResponse
+AbstractResponse <|-- HtmlResponse
+
+class StatusResponse
+AbstractResponse <|-- StatusResponse
+
+class URLNotFoundResponse
+AbstractResponse <|-- URLNotFoundResponse
+
+class URLRegexNotMatchedException
+java.lang.Exception <|-- URLRegexNotMatchedException
+JavaWfw <-- URLRegexNotMatchedException : <<catch>>
+
+interface IPath {
+	+validateUrl() throws URLRegexNotMatchedException : void
+	+getUrl() : String
+	+getUrlPattern() : Pattern
+	+isUrlMatched(url : String) : boolean
+	+getController() : Class<? extends IController>
+	+getName() : String
+}
+URLRegexNotMatchedException <-- IPath : <<throws>>
+
+class Path implements IPath {
+	-url : String
+	-controller : Class<? extends IController>
+	-name : String
+	+validateUrl() throws URLRegexNotMatchedException : void
+	+getUrl() : String
+	+getUrlPattern() : Pattern
+	+isUrlMatched(url : String) : boolean
+	+getController() : Class<? extends IController>
+	+getName() : String
+}
+URLRegexNotMatchedException <-- Path : <<throws>>
+
+interface IUrls {
+	+getPath(url : String) : IPath
+}
+
+abstract AbstractUrls implements IUrls {
+	+urlPatterns : ArrayList<IPath>
+	+validateUrl() throws URLRegexNotMatchedException : void
+	-matchUrl(url : String) : IPath
+	+getPath(url : String) : IPath
+}
+URLRegexNotMatchedException <-- AbstractUrls : <<throws>>
+
+class ConcreteUrls
+
+AbstractUrls <|-- ConcreteUrls
+ConcreteUrls *-- Path
+JavaWfw *-- ConcreteUrls
+URLResolver *-- ConcreteUrls
+
+interface IController {
+	+get(request : IRequest) : IResponse
+	+post(request : IRequest) : IResponse
+	+put(request : IRequest) : IResponse
+	+delete(request : IRequest) : IResponse
+}
+
+abstract AbstractController implements IController {
+	+get(request : IRequest) : IResponse
+	+post(request : IRequest) : IResponse
+	+put(request : IRequest) : IResponse
+	+delete(request : IRequest) : IResponse
+}
+
+class ConcreteController {
+	+get(request : IRequest) : IResponse
+	+post(request : IRequest) : IResponse
+	+put(request : IRequest) : IResponse
+	+delete(request : IRequest) : IResponse
+}
+
+AbstractController <|-- ConcreteController
+Path *-- ConcreteController
+
+interface IRequestMiddleware {
+	+{static}execute(request : IRequest) : IRequest
+}
+
+abstract AbstractRequestMiddleware implements IRequestMiddleware {
+	+{static}execute(request : IRequest) : IRequest
+}
+
+interface IResponseMiddleware {
+	+{staitc}execute(response : IResponse) : IResponse
+}
+
+abstract AbstractResponseMiddleware  implements IResponseMiddleware {
+	+{static}execute(response : IResponse) : IResponse
+}
+
+interface IRequestMiddlewareExecuter {
+	+{static}execute(request : IRequest) : IRequest
+}
+
+class RequestMiddlewareExecuter implements IRequestMiddlewareExecuter {
+	+{static}execute(request : IRequest) : IRequest
+}
+
+interface IResponseMiddlewareExecuter {
+	+{static}execute(response : IResponse) : IResponse
+}
+
+class ResponseMiddlewareExecuter implements IResponseMiddlewareExecuter {
+	+{static}execute(response : IResponse) :IResponse
+}
+
+
+JavaWfw "1" *-- "1" Server
+Server "1" *-- "0..*" Worker
+Server "1" *-- "1" URLResolver
+Worker "1" *-- "1" URLResolver
+Worker "1" *-- "1" PathParameterResolver
+Worker "1" *-- "1" Request
+Worker "1" *-- "0..1" JsonResponse
+Worker "1" *-- "0..1" HtmlResponse
+Worker "1" *-- "0..1" StatusResponse
+Worker "1" *-- "0..1" URLNotFoundResponse
+
+
+@enduml
