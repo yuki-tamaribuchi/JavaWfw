@@ -56,9 +56,9 @@ public class Request implements IRequest {
 				
 				isRequestLine = false;
 			} else {
-				String[] splitedLine = line.split(":");
+				String[] splitedLine = line.split(": ");
 				if (splitedLine.length == 2){
-					requestOptions.put(splitedLine[0], splitedLine[1].substring(1));
+					requestOptions.put(splitedLine[0], splitedLine[1]);
 				}
 				
 				if (line.startsWith("Content-Length:")) {
