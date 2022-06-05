@@ -18,6 +18,7 @@ public class Path implements IPath {
 	private String name;
 	private Class<? extends IRequestMiddleware>[] requestMiddlewares;
 	private Class<? extends IResponseMiddleware>[] responseMiddlewares;
+	private Pattern urlPattern;
 
 	public Path(String url, Class<? extends IController> controller, String name, IRequestMiddlewaresList requestMiddlewaresList, IResponseMiddlewaresList responseMiddlewaresList) {
 		this.url = url;
@@ -25,6 +26,7 @@ public class Path implements IPath {
 		this.name = name;
 		this.requestMiddlewares = requestMiddlewaresList.getRequestMiddlewares();
 		this.responseMiddlewares = responseMiddlewaresList.getResponseMiddlewaresList();
+		this.urlPattern = getUrlPattern();
 	}
 
 	public void validateUrl() throws URLRegexNotMatchedException {
@@ -37,7 +39,7 @@ public class Path implements IPath {
 		return url;
 	}
 
-	public Pattern getUrlPattern() {
+	private Pattern getUrlPattern() {
 		String regexUrl = url.replaceAll("\\<(.*?)\\>", "[0-9a-zA-Z]+?");
 		Pattern patternUrl = Pattern.compile(regexUrl);
 		return patternUrl;
@@ -46,6 +48,7 @@ public class Path implements IPath {
 	public boolean isUrlMatched(String url) {
 		Pattern urlPattern = getUrlPattern();
 		Matcher urlMatcher = urlPattern.matcher(url);
+		Matcher urlMatcher = this.urlPattern.matcher(url);
 		return urlMatcher.matches();
 	}
 

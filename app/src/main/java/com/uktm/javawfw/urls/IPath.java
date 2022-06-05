@@ -12,7 +12,6 @@ import com.uktm.javawfw.exception.urls.URLRegexNotMatchedException;
 public interface IPath {
 	public void validateUrl() throws URLRegexNotMatchedException;
 	public String getUrl();
-	public Pattern getUrlPattern();
 	public boolean isUrlMatched(String url);
 	public Class<? extends IController> getController();
 	public String getName();
