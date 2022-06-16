@@ -14,6 +14,8 @@ import com.uktm.javawfw.dispatcher.IDispatcher;
 import com.uktm.javawfw.dispatcher.Dispatcher;
 import com.uktm.javawfw.middleware.executer.request.RequestMiddlewareExecuter;
 import com.uktm.javawfw.middleware.executer.response.ResponseMiddlewareExecuter;
+import com.uktm.javawfw.exception.http.response.NullResponseException;
+import com.uktm.javawfw.http.response.InternalServerErrorResponse;
 
 import java.net.Socket;
 import java.util.Hashtable;
@@ -54,11 +56,12 @@ public class Worker extends Thread {
 				controllerClass = path.getController();
 
 				response = Dispatcher.dispatch(request, controllerClass);
-
+				response = ResponseMiddlewareExecuter.execute(path.getResponseMiddlewares(), response);
 			} catch (URLMatchNotFoundException e) {
 				response = new URLNotFoundResponse(socket);
+			} catch (NullResponseException e) {
+				response = new InternalServerErrorResponse(socket);
 			} finally {
-                response = ResponseMiddlewareExecuter.execute(path.getResponseMiddlewares(), response);
 				response.sendResponse();
 				socket.close();
 			}
