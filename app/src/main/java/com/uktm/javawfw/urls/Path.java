@@ -11,6 +11,7 @@ import com.uktm.javawfw.middleware.response.base.IResponseMiddleware;
 import com.uktm.javawfw.exception.urls.URLRegexNotMatchedException;
 import com.uktm.javawfw.middleware.list.request.IRequestMiddlewaresList;
 import com.uktm.javawfw.middleware.list.response.IResponseMiddlewaresList;
+import com.uktm.javawfw.utils.string.Replace;
 
 public class Path implements IPath {
 	private String url;
@@ -41,13 +42,15 @@ public class Path implements IPath {
 
 	private Pattern getUrlPattern() {
 		String regexUrl = url.replaceAll("\\<(.*?)\\>", "[0-9a-zA-Z]+?");
+		regexUrl = Replace.replaceLast(regexUrl, "\\[0-9a\\-zA\\-Z\\]\\+\\?", "[0-9a-zA-Z]+?|.*");
 		Pattern patternUrl = Pattern.compile(regexUrl);
 		return patternUrl;
 	}
 
 	public boolean isUrlMatched(String url) {
-		Pattern urlPattern = getUrlPattern();
-		Matcher urlMatcher = urlPattern.matcher(url);
+		if (!url.endsWith("/")){
+			url = url + "/";
+		}
 		Matcher urlMatcher = this.urlPattern.matcher(url);
 		return urlMatcher.matches();
 	}
