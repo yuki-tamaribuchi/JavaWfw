@@ -4,6 +4,7 @@ import java.net.Socket;
 import java.util.Hashtable;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 
 import com.uktm.javawfw.http.response.IResponse;
@@ -37,6 +38,13 @@ public abstract class AbstractResponse implements IResponse {
 	}
 
 	private String createResponseHeader() {
+		int contentLength;
+		if (responseBody!=null){
+			contentLength = responseBody.getBytes(StandardCharsets.UTF_8).length + 2;
+		} else {
+			contentLength = 0;
+		}
+		responseOptions.put("Content-Length", Integer.toString(contentLength));
 		StringBuilder responseHeaderStringBuilder = new StringBuilder();
 		responseOptions.forEach((optionName, optionValue) -> {
 				responseHeaderStringBuilder.append(optionName + ": " + optionValue + "\r\n");
