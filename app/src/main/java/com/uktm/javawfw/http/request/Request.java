@@ -24,6 +24,7 @@ public class Request implements IRequest {
 	private String requestBody;
 	private Hashtable<String, String> pathParameters;
 	private Hashtable<String, String> queryParameters = new Hashtable<>();
+	public String rawUri;
 
 
 	public Request(Socket socket) throws IOException, LoadRequestFailedException {
@@ -108,7 +109,7 @@ public class Request implements IRequest {
 	public String getRequestOutput() {
 		LocalDateTime datetime = LocalDateTime.now();
 		String formattedDatetime = datetime.format(DateTimeFormatter.ofPattern("yyyy/MMM/dd HH:mm:ss"));
-		return formattedDatetime + " " + requestLine.get("method") + " " + requestLine.get("uri");
+		return formattedDatetime + " " + requestLine.get("method") + " " + rawUri;
 	}
 
 	public void setPathParameters(Hashtable<String, String> pathParameters) {
