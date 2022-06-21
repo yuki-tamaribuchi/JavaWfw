@@ -12,4 +12,5 @@ public interface IRequest {
 	public String getRequestOutput();
 	public void setPathParameters(Hashtable<String, String> pathParameters);
 	public Hashtable<String, String> getPathParameters();
+	public Hashtable<String, String> getQueryParameters();
 }

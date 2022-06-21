@@ -23,6 +23,7 @@ public class Request implements IRequest {
 	private Hashtable<String, String> requestOptions = new Hashtable<String, String>();
 	private String requestBody;
 	private Hashtable<String, String> pathParameters;
+	private Hashtable<String, String> queryParameters = new Hashtable<>();
 
 
 	public Request(Socket socket) throws IOException, LoadRequestFailedException {
@@ -50,9 +51,20 @@ public class Request implements IRequest {
 
 			if (isRequestLine) {
 				String[] splited_line = line.split(" ");
-				requestLine.put("method", splited_line[0]);
-				requestLine.put("uri", splited_line[1].substring(1));
-				requestLine.put("protocol", splited_line[2]);
+				String method = splited_line[0];
+				String uri = splited_line[1].substring(1);
+				String protocol = splited_line[2];
+				rawUri = uri;
+
+				if (uri.contains("?")) {
+					String[] splittedUri = uri.split("\\?");
+					uri = splittedUri[0];
+					createQureyParameterHashTable(splittedUri[1]);
+				}
+
+				requestLine.put("method", method);
+				requestLine.put("uri", uri);
+				requestLine.put("protocol", protocol);
 				
 				isRequestLine = false;
 			} else {
@@ -105,5 +117,17 @@ public class Request implements IRequest {
 
 	public Hashtable<String, String> getPathParameters() {
 		return pathParameters;
+	}
+
+	private void createQureyParameterHashTable(String queryParametersString) {
+		String[] splittedQueryParametersString = queryParametersString.split("&");
+		for (String queryParameter : splittedQueryParametersString) {
+			String splittedQueryParameter[] = queryParameter.split("=");
+			queryParameters.put(splittedQueryParameter[0], splittedQueryParameter[1]);
+		}
+	}
+
+	public Hashtable<String, String> getQueryParameters() {
+		return queryParameters;
 	}
 }
