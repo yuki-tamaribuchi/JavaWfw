@@ -130,4 +130,11 @@ public class Request implements IRequest {
 	public Hashtable<String, String> getQueryParameters() {
 		return queryParameters;
 	}
+
+	public String getQueryParameterByKey(String key) {
+		if (queryParameters.containsKey(key)){
+			return queryParameters.get(key);
+		}
+		return null;
+	}
 }
