@@ -10,12 +10,19 @@ import com.uktm.javawfw.exception.urls.URLRegexNotMatchedException;
 
 
 public class JavaWfw {
+    private String serverAddr;
+    private int serverPort;
     private ArrayList<IUrls> urlsArrayList = new ArrayList<IUrls>();
     private Server server;
 
+    public JavaWfw(String serverAddr, int serverPort) {
+        this.serverAddr = serverAddr;
+        this.serverPort = serverPort;
+    }
+
     public void serve() {
         try{
-            server = new Server("127.0.0.1", 8000, urlsArrayList);
+            server = new Server(serverAddr, serverPort, urlsArrayList);
             server.serve();
         } catch (IOException e) {
             System.err.println("Host error: " + e);
